@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SwerveMovement : MonoBehaviour
@@ -21,7 +19,7 @@ public class SwerveMovement : MonoBehaviour
 
     private void Update()
     {
-        if (GameController._oyunAktif == true)
+        if (GameManager.instance.isContinue == true)
         {
             centerPosition = _getPoint.transform.position;
 
@@ -49,13 +47,13 @@ public class SwerveMovement : MonoBehaviour
 
         }
 
-          
 
 
-       
 
-      
-        
-       
+
+
+
+
+
     }
 }

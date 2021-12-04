@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviour
 
     private GameObject _player;
 
-    private UIController _uiController;
 
     private int _toplananElmasSayisi;
 
@@ -26,8 +25,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         LevelStart();
-
-        _uiController = GameObject.Find("UIController").GetComponent<UIController>();
 
     }
 
@@ -52,12 +49,12 @@ public class PlayerController : MonoBehaviour
 
     private void WinScreenAc()
     {
-        _uiController.WinScreenPanelOpen();
+
     }
 
     private void LoseScreenAc()
     {
-        _uiController.LoseScreenPanelOpen();
+
     }
 
 

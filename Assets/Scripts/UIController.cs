@@ -1,128 +1,107 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 
 public class UIController : MonoBehaviour
 {
-    [SerializeField] private GameObject _tapToStartPanel;
-    [SerializeField] private GameObject _gameScreenPanel;
-    [SerializeField] private GameObject _winScreenPanel;
-    [SerializeField] private GameObject _loseScreenPanel;
-
-    [SerializeField] private Text _levelText;
-    [SerializeField] private Text _elmasText;
-    [SerializeField] private Text _winElmasText;
-    [SerializeField] private Text _loseElmasText;
-    [SerializeField] private Text _tapToStartElmasText;
-
-    private int _levelNumber;
-
-    private int _elmasSayisi;
-
-    private PlayerController _playerController;
-
-    private LevelController _levelController;
-
-    private int _levelSonuElmasSayisi;
-
-    private int _oyunBasladi;
-
-    void Start()
-    {
-        _tapToStartPanel.SetActive(true);
-
-        _levelNumber = PlayerPrefs.GetInt("LevelNumber");
-
-        _oyunBasladi = PlayerPrefs.GetInt("OyunBasladi");
-        if (_oyunBasladi == 0)
-        {
-            PlayerPrefs.SetInt("LevelNumber", 1);
-            _oyunBasladi = 1;
-            PlayerPrefs.SetInt("OyunBasladi", _oyunBasladi);
-        }
-        else
-        {
-
-        }
-
-        _elmasSayisi = PlayerPrefs.GetInt("ElmasSayisi");
-
-        _playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-
-        _levelController = GameObject.Find("LevelController").GetComponent<LevelController>();
-
-        _tapToStartElmasText.text = _elmasSayisi.ToString();
+	public static UIController instance;
+	public Slider drownSlider, waterSlider; // u?a??n bo?ulmas? fazla suya dalmas?
+	public GameObject TapToStartPanel,LoosePanel,GamePanel,WinPanel;
+	public Text soundButtonText, levelNoText,scoreText,gemsText, 
+	totalScoreTextStartPanel, totalGemsTextStartPanel, totalScoreTextGamePanel,totalGemsTextGamePanel;
+	public TextMeshProUGUI npcCountText;
 
 
-    }
 
-  
-    void Update()
-    {
-        _levelNumber = PlayerPrefs.GetInt("LevelNumber");
 
-        _elmasSayisi = PlayerPrefs.GetInt("ElmasSayisi");
 
-       
-        _levelText.text = "LEVEL " + (_levelNumber);
-        
-        
-        _elmasText.text = _elmasSayisi.ToString();
-    }
 
-    public void TaptoStartPanelClose()
-    {
-        GameController._oyunAktif = true;
-        _tapToStartPanel.SetActive(false);
-        _gameScreenPanel.SetActive(true);
-    }
+	private void Awake()
+	{
+		if (instance == null) instance = this;
+		else Destroy(this);
+	}
 
-    public void WinScreenPanelOpen()
-    {
-        _gameScreenPanel.SetActive(false);
-        _winScreenPanel.SetActive(true);
-        _winElmasText.text = _levelSonuElmasSayisi.ToString();
-    }
+	//private void Start()
+	//{
+	//	StartUI();
+	//	totalScoreTextStartPanel.text =PlayerPrefs.GetInt("totalscore").ToString();
+	//	totalGemsTextStartPanel.text =PlayerPrefs.GetInt("totalgems").ToString();
+	//	totalGemsTextGamePanel.text =PlayerPrefs.GetInt("totalgems").ToString();
+	//	totalScoreTextGamePanel.text =PlayerPrefs.GetInt("totalscore").ToString();
+	//}
 
-    public void LoseScreenPanelOpen()
-    {
-        _gameScreenPanel.SetActive(false);
-        _loseScreenPanel.SetActive(true);
-        _loseElmasText.text = _levelSonuElmasSayisi.ToString();
-    }
+	public void StartUI()
+	{
+		TapToStartPanel.SetActive(true);
+		LoosePanel.SetActive(false);
+		GamePanel.SetActive(false);
+	}
 
-    public void NextLevelButton()
-    {
-        GameController._oyunAktif = false;
-        _winScreenPanel.SetActive(false);
-        _loseScreenPanel.SetActive(false);
-        _tapToStartPanel.SetActive(true);
-        _elmasSayisi = _elmasSayisi + _levelSonuElmasSayisi;
-        PlayerPrefs.SetInt("ElmasSayisi", _elmasSayisi);
-        _tapToStartElmasText.text = _elmasSayisi.ToString();
-        _levelController.LevelDegistir();
-        _playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        _playerController.LevelStart();
-    }
+	public void SetLevelText(int levelNo)
+	{
+		levelNoText.text = "Level " + levelNo.ToString();
+	}
 
-    public void LevelSonuElmasSayisi(int deger)
-    {
-        _levelSonuElmasSayisi = deger;
-    }
+	// TAPTOSTART TU?UNA BASILDI?INDA  --- G?R?? EKRANINDA VE LEVEL BA?LARINDA
+	public void TapToStartButtonClick()
+	{
 
-    public void LevelRestartButton()
-    {
-        GameController._oyunAktif = false;
-        _winScreenPanel.SetActive(false);
-        _loseScreenPanel.SetActive(false);
-        _tapToStartPanel.SetActive(true);
-        _elmasSayisi = _elmasSayisi + _levelSonuElmasSayisi;
-        PlayerPrefs.SetInt("ElmasSayisi", _elmasSayisi);
-        _tapToStartElmasText.text = _elmasSayisi.ToString();
-        _levelController.LevelRestart();
-        _playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        _playerController.LevelStart();
-    }
+		TapToStartPanel.SetActive(false);
+		GamePanel.SetActive(true);
+
+	}
+
+	// RESTART TU?UNA BASILDI?INDA  --- LOOSE EKRANINDA
+	public void RestartButtonClick()
+	{
+		TapToStartPanel.SetActive(true);
+		LoosePanel.SetActive(false);
+
+		//LevelController.instance.RestartLevelEvents();
+	}
+
+
+	// NEXT LEVEL TU?UNA BASILDI?INDA  --- W?N EKRANINDA
+	public void NextLevelButtonClick()
+	{		
+		TapToStartPanel.SetActive(true);
+		WinPanel.SetActive(false);
+		GamePanel.SetActive(false);
+		//LevelController.instance.NextLevelEvents();
+	}
+
+	public void SetNpcCountText(int count, int maxCount)
+	{
+		if (maxCount < 34) npcCountText.text = count + "/" + maxCount;
+		else if (maxCount == 34) npcCountText.text = count + "/Max";
+	}
+
+	//public void SetScoreText()
+	//{
+	//	scoreText.text =GameManager.instance.score.ToString();
+	//}
+
+	//public void SetGemsText()
+	//{
+	//	gemsText.text =GameManager.instance.gems.ToString();
+	//}
+
+	//public void SetTotalScoreText()
+	//{
+	//	totalScoreTextStartPanel.text = PlayerPrefs.GetInt("totalscore").ToString();
+	//	totalScoreTextGamePanel.text = PlayerPrefs.GetInt("totalscore").ToString();
+	//}
+
+	//public void SetTotalGemsText()
+	//{
+	//	totalGemsTextStartPanel.text =PlayerPrefs.GetInt("totalgems").ToString();
+	//	totalGemsTextGamePanel.text = PlayerPrefs.GetInt("totalgems").ToString();
+	//}
+
 
 }

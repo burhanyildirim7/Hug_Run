@@ -14,7 +14,7 @@ public class KarakterPaketiMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (GameController._oyunAktif == true)
+        if (GameManager.instance.isContinue)
         {
             transform.Translate(Vector3.forward * Time.deltaTime * _speed);
         }
