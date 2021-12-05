@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class NpcController : MonoBehaviour
 {
@@ -10,10 +11,19 @@ public class NpcController : MonoBehaviour
 
     public SkinnedMeshRenderer skRenderer;
 	public GameObject arms;
-
+	public GameObject player;
+	private Vector3 firsNpcFinalPosition;
+	private float npcFinalYPosition = -1f;
+	private float npcHeight = 1.6f;
 	private int npcCount = 0;
 	private int maxNpcCount = 1;
+	private int maxTotalNpc = 60;
 
+
+	private void Start()
+	{
+		DOTween.Init();
+	}
 
 	private void OnTriggerEnter(Collider other)
 	{
@@ -31,7 +41,7 @@ public class NpcController : MonoBehaviour
 				UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 			}
 
-			
+			SetArmValue();
 		}
 		else if (other.CompareTag("obstacle"))
 		{
@@ -42,42 +52,30 @@ public class NpcController : MonoBehaviour
 			int fallNpcCount = Random.Range(1,3);
 			if(fallNpcCount == 1 && npcCount >= 1)
 			{
-				GameObject fallingNpc = arms.transform.GetChild(npcCount-1).gameObject;
-				fallingNpc.transform.tag = "fNpc";
-				fallingNpc.GetComponent<Collider>().enabled = true;
-				fallingNpc.GetComponent<Animator>().SetTrigger("fall");
-				fallingNpc.transform.SetParent(null);
-				StartCoroutine(FallNpcThrow(fallingNpc));
+				FallNpc(arms.transform.GetChild(npcCount - 1).gameObject);
 				npcCount -= 1;
 			}
 			else if(fallNpcCount == 2 && npcCount >= 2)
 			{
-				GameObject fallingNpc1 = arms.transform.GetChild(npcCount-1).gameObject;
-				fallingNpc1.transform.tag = "fNpc";
-				fallingNpc1.GetComponent<Collider>().enabled = true;
-				fallingNpc1.GetComponent<Animator>().SetTrigger("fall");
-				fallingNpc1.transform.SetParent(null);
-				StartCoroutine(FallNpcThrow(fallingNpc1));
-
-				GameObject fallingNpc2 = arms.transform.GetChild(npcCount-2).gameObject;
-				fallingNpc2.transform.tag = "fNpc";
-				fallingNpc2.GetComponent<Collider>().enabled = true;
-				fallingNpc2.GetComponent<Animator>().SetTrigger("fall");
-				fallingNpc2.transform.SetParent(null);
-				StartCoroutine(FallNpcThrow(fallingNpc2));
+				FallNpc(arms.transform.GetChild(npcCount - 1).gameObject);
+				FallNpc(arms.transform.GetChild(npcCount - 2).gameObject);
 				npcCount -= 2;
 			}
 			else if(npcCount == 1)
 			{
-				GameObject fallingNpc = arms.transform.GetChild(npcCount - 1).gameObject;
-				fallingNpc.transform.tag = "fNpc";
-				fallingNpc.GetComponent<Collider>().enabled = true;
-				fallingNpc.GetComponent<Animator>().SetTrigger("fall");
-				fallingNpc.transform.SetParent(null);
-				StartCoroutine(FallNpcThrow(fallingNpc));
+				FallNpc(arms.transform.GetChild(npcCount - 1).gameObject);
 				npcCount -= 1;
 			}
 			UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
+			SetArmValue();
+		}
+		else if (other.CompareTag("final"))
+		{
+			GameManager.instance.isContinue = false;
+			StartCoroutine(NpcFinalArray());
+			PlayerController.instance.PlayerIdleAnim();
+			PlayerController.instance.SetArmForStart();
+			CameraController.instance.SetCameraFinalOffset();
 		}
 		
 
@@ -88,130 +86,72 @@ public class NpcController : MonoBehaviour
 	{
 		 if (other.CompareTag("+3"))
 		{
-			GameManager.instance.disabledObjects.Add(other.gameObject);
-			other.gameObject.SetActive(false);
-			maxNpcCount += 3;
-			SetArmValue(3);
+			PositiveDoor(other.gameObject, 3);
 		}
 		else if (other.CompareTag("+5"))
 		{
-			GameManager.instance.disabledObjects.Add(other.gameObject);
-			other.gameObject.SetActive(false);
-			maxNpcCount += 5;
-			SetArmValue(5);
+			PositiveDoor(other.gameObject, 5);
 		}
 		else if (other.CompareTag("+10"))
 		{
-			GameManager.instance.disabledObjects.Add(other.gameObject);
-			other.gameObject.SetActive(false);
-			maxNpcCount += 10;
-			SetArmValue(10);
+			PositiveDoor(other.gameObject,10);
 		}
 		else if (other.CompareTag("-3"))
 		{
-			GameManager.instance.disabledObjects.Add(other.gameObject);
-			other.gameObject.SetActive(false);
-			maxNpcCount -= 3;
-			SetArmValue(-3);
+			NegativeDoor(other.gameObject, 3);
 		}
 		else if (other.CompareTag("-5"))
 		{
-			GameManager.instance.disabledObjects.Add(other.gameObject);
-			other.gameObject.SetActive(false);
-			maxNpcCount -= 5;
-			SetArmValue(-5);
+			NegativeDoor(other.gameObject, 5);
 		}
 		else if (other.CompareTag("-10"))
 		{
-			GameManager.instance.disabledObjects.Add(other.gameObject);
-			other.gameObject.SetActive(false);
-			maxNpcCount -= 10;
-			SetArmValue(-10);
+			NegativeDoor(other.gameObject, 10);
 		}
-		if (maxNpcCount > 34) maxNpcCount = 34;
+		if (maxNpcCount > maxTotalNpc) maxNpcCount = maxTotalNpc;
 		UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 	}
 
-	private void SetArmValue(int value)
-	{
-		if(value == 3)
-		{
-			if(armValue == 0 && armValue != 100)
-			{
-				armValue = 20;
-				StartCoroutine(MakeBlendShape(armValue));
-			}
-			else if(armValue != 100)
-			{
-				armValue += 15;
-				StartCoroutine(MakeBlendShape(armValue));
-			}
-		}
-		else if(value == 5)
-		{
-			if (armValue == 0 && armValue != 100)
-			{
-				armValue = 20;
-				StartCoroutine(MakeBlendShape(armValue));
-			}
-			else if (armValue != 100)
-			{
-				armValue += 20;
-				StartCoroutine(MakeBlendShape(armValue));
-			}
-		}
-		else if(value == 10)
-		{
-			if (armValue == 0 && armValue != 100)
-			{
-				armValue = 40;
-				StartCoroutine(MakeBlendShape(armValue));
-			}
-			else if (armValue != 100)
-			{
-				armValue += 30;
-				StartCoroutine(MakeBlendShape(armValue));
-			}
-		}
-		if (value == -3)
-		{
-			if (armValue > 20)
-			{
-				armValue -= 15;
-				StartCoroutine(MakeBlendShape(armValue));
-			}else if(armValue <= 20)
-			{
-				armValue = 0;
-				StartCoroutine(MakeBlendShape(armValue));
-			}
 
-		}
-		else if (value == -5)
+	private void PositiveDoor(GameObject obj , int value)
+	{
+		GameManager.instance.disabledObjects.Add(obj.gameObject);
+		obj.gameObject.SetActive(false);
+		maxNpcCount += value;
+		SetArmValue();
+	}
+
+	private void NegativeDoor(GameObject obj , int value)
+	{
+		GameManager.instance.disabledObjects.Add(obj.gameObject);
+		obj.gameObject.SetActive(false);
+		maxNpcCount -= value;
+		bool isLastThrow = false;
+		if (value >= maxNpcCount) isLastThrow = true;
+		if (maxNpcCount <= 0) maxNpcCount = 1;
+		if (npcCount > maxNpcCount)
 		{
-			if (armValue > 25)
+			while (npcCount != maxNpcCount)
 			{
-				armValue -= 20;
-				StartCoroutine(MakeBlendShape(armValue));
-			}
-			else if (armValue <= 25)
-			{
-				armValue = 0;
-				StartCoroutine(MakeBlendShape(armValue));
+				FallNpc(arms.transform.GetChild(npcCount - 1).gameObject);
+				npcCount--;
+				if (npcCount == 0) break;
 			}
 		}
-		else if (value == -10)
+		if (isLastThrow)
 		{
-			if (armValue > 40)
-			{
-				armValue -= 30;
-				StartCoroutine(MakeBlendShape(armValue));
-			}
-			else if (armValue <= 40)
-			{
-				armValue = 0;
-				StartCoroutine(MakeBlendShape(armValue));
-			}
+			FallNpc(arms.transform.GetChild(0).gameObject);
+			maxNpcCount = 1;
+			npcCount = 0;
 		}
+		SetArmValue();
+		UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
+	}
+
+	private void SetArmValue()
+	{
+		float keyValue = 7 + npcCount*100/65;
+		skRenderer.SetBlendShapeWeight(0,keyValue);
 		SetCollider();
 	}
 
@@ -267,6 +207,15 @@ public class NpcController : MonoBehaviour
 
 	}
 
+	private void FallNpc(GameObject obj)
+	{
+		obj.transform.tag = "fNpc";
+		obj.GetComponent<Collider>().enabled = true;
+		obj.GetComponent<Animator>().SetTrigger("fall");
+		obj.transform.SetParent(null);
+		StartCoroutine(FallNpcThrow(obj));
+	}
+
 	IEnumerator FallNpcThrow(GameObject obj)
 	{
 		int frame = 0;
@@ -283,6 +232,38 @@ public class NpcController : MonoBehaviour
 				obj.transform.tag = "npc";
 			}
 		}	
+	}
+
+	IEnumerator NpcFinalArray()
+	{
+		int count = arms.transform.childCount;
+		GameObject[] objects = new GameObject[arms.transform.childCount];
+		for (int i = 0; i < arms.transform.childCount; i++)
+		{
+			objects[i] = arms.transform.GetChild(i).gameObject;
+		}
+		for (int i = 0; i < count; i++)
+		{
+			objects[i].GetComponent<Animator>().SetTrigger("idle");
+			objects[i].transform.tag = "fNpc";
+			objects[i].transform.SetParent(null);
+		}
+		for (int i = 0; i < count; i++)
+		{		
+			npcFinalYPosition += npcHeight;
+			firsNpcFinalPosition = new Vector3(arms.transform.position.x, npcFinalYPosition, arms.transform.position.z + 10);
+			objects[i].transform.DOMove(firsNpcFinalPosition, 1);
+			yield return new WaitForSeconds(.1f);
+			objects[i].transform.rotation = Quaternion.Euler(0, 180, 0);
+			npcCount--;
+			UIController.instance.SetNpcCountText(npcCount,maxNpcCount);
+		}
+		npcFinalYPosition += npcHeight;
+		firsNpcFinalPosition = new Vector3(arms.transform.position.x, npcFinalYPosition, arms.transform.position.z + 10);
+		player.transform.DOMove(firsNpcFinalPosition, 1);
+		player.transform.rotation = Quaternion.Euler(0,180,0);
+		PlayerController.instance.PlayerClapAnim();
+		CameraController.instance.SetCameraFinalInverse();
 	}
 
 

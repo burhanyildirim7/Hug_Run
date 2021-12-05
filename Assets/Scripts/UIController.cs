@@ -1,20 +1,14 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 
 
 public class UIController : MonoBehaviour
 {
 	public static UIController instance;
-	public Slider drownSlider, waterSlider; // u?a??n bo?ulmas? fazla suya dalmas?
 	public GameObject TapToStartPanel,LoosePanel,GamePanel,WinPanel;
-	public Text soundButtonText, levelNoText,scoreText,gemsText, 
-	totalScoreTextStartPanel, totalGemsTextStartPanel, totalScoreTextGamePanel,totalGemsTextGamePanel;
 	public TextMeshProUGUI npcCountText;
-
+	public Animator playerAnimator;
+	public Renderer playerArmForStart, playerArmForGaming;
 
 
 
@@ -26,14 +20,10 @@ public class UIController : MonoBehaviour
 		else Destroy(this);
 	}
 
-	//private void Start()
-	//{
-	//	StartUI();
-	//	totalScoreTextStartPanel.text =PlayerPrefs.GetInt("totalscore").ToString();
-	//	totalGemsTextStartPanel.text =PlayerPrefs.GetInt("totalgems").ToString();
-	//	totalGemsTextGamePanel.text =PlayerPrefs.GetInt("totalgems").ToString();
-	//	totalScoreTextGamePanel.text =PlayerPrefs.GetInt("totalscore").ToString();
-	//}
+	private void Start()
+	{
+		StartUI();
+	}
 
 	public void StartUI()
 	{
@@ -42,17 +32,19 @@ public class UIController : MonoBehaviour
 		GamePanel.SetActive(false);
 	}
 
-	public void SetLevelText(int levelNo)
-	{
-		levelNoText.text = "Level " + levelNo.ToString();
-	}
+	//public void SetLevelText(int levelNo)
+	//{
+	//	levelNoText.text = "Level " + levelNo.ToString();
+	//}
 
 	// TAPTOSTART TU?UNA BASILDI?INDA  --- G?R?? EKRANINDA VE LEVEL BA?LARINDA
 	public void TapToStartButtonClick()
 	{
-
+		GameManager.instance.isContinue = true;
+		PlayerController.instance.SetArmForGaming();
 		TapToStartPanel.SetActive(false);
 		GamePanel.SetActive(true);
+		playerAnimator.SetTrigger("walk");
 
 	}
 
@@ -61,7 +53,6 @@ public class UIController : MonoBehaviour
 	{
 		TapToStartPanel.SetActive(true);
 		LoosePanel.SetActive(false);
-
 		//LevelController.instance.RestartLevelEvents();
 	}
 
@@ -77,8 +68,7 @@ public class UIController : MonoBehaviour
 
 	public void SetNpcCountText(int count, int maxCount)
 	{
-		if (maxCount < 34) npcCountText.text = count + "/" + maxCount;
-		else if (maxCount == 34) npcCountText.text = count + "/Max";
+		npcCountText.text = count + "/" + maxCount;
 	}
 
 	//public void SetScoreText()

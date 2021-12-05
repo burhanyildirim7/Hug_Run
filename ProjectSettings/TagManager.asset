@@ -17,6 +17,7 @@ TagManager:
   - obstacle
   - npc
   - fNpc
+  - final
   layers:
   - Default
   - TransparentFX

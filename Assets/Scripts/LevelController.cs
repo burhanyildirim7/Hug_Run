@@ -6,117 +6,80 @@ using ElephantSDK;
 public class LevelController : MonoBehaviour
 {
 
-    [SerializeField] private List<GameObject> _leveller = new List<GameObject>();
+	public static LevelController instance;
+	public int levelNo, tempLevelNo, totalLevelNo;
+	public List<GameObject> levels = new List<GameObject>();
+	private GameObject currentLevelObj;
 
-    private int _levelNumarasi;
+	private void Awake()
+	{
+		if (instance == null) instance = this;
+		else Destroy(this.gameObject);
+	}
 
-    private GameObject güncelLevel;
+	private void Start()
+	{
+		//PlayerPrefs.DeleteAll();
+		totalLevelNo = PlayerPrefs.GetInt("level");
+		if (totalLevelNo == 0)
+		{
+			totalLevelNo = 1;
+			levelNo = 1;
+		}
+		//UIController.instance.SetLevelText(totalLevelNo);
+		LevelStartingEvents();
+	}
 
-    private int _levelNumber;
+	public void IncreaseLevelNo()
+	{
+		tempLevelNo = levelNo;
+		totalLevelNo++;
+		PlayerPrefs.SetInt("level", totalLevelNo);
+		//UIController.instance.SetLevelText(totalLevelNo);
+	}
 
-    private int _toplamLevelSayisi;
+	// Bu fonksiyon oyun ilk a??ld???nda ?a?r?lacak..
+	public void LevelStartingEvents()
+	{
+		if (totalLevelNo > levels.Count)
+		{
+			levelNo = Random.Range(1, levels.Count + 1);
+			if (levelNo == tempLevelNo) levelNo = Random.Range(1, levels.Count + 1);
+		}
+		else
+		{
+			levelNo = totalLevelNo;
+		}
+		//UIController.instance.levelNoText.text = "Level " + totalLevelNo.ToString();
+		currentLevelObj = Instantiate(levels[levelNo - 1], Vector3.zero, Quaternion.identity);
+		Elephant.LevelStarted(totalLevelNo);
+	}
 
-    void Start()
-    {
-        if (güncelLevel)
-        {
-            Destroy(güncelLevel);
-        }
-        else
-        {
+	// next level tu?una bas?ld???nda UIManager scriptinden ?a?r?lacak..
+	public void NextLevelEvents()
+	{
+		Elephant.LevelCompleted(totalLevelNo);
+		Destroy(currentLevelObj);
+		IncreaseLevelNo();
+		LevelStartingEvents();
+	}
 
-        }
-       // PlayerPrefs.SetInt("LevelNumarası", 0);
-
-        _levelNumarasi = PlayerPrefs.GetInt("LevelNumarasi");
-        _levelNumber = PlayerPrefs.GetInt("LevelNumber");
-        _toplamLevelSayisi = _leveller.Count - 1;
-
-        if (_levelNumber < _toplamLevelSayisi)
-        {
-            _levelNumarasi = PlayerPrefs.GetInt("LevelNumarasi");
-            güncelLevel  = Instantiate(_leveller[_levelNumarasi], new Vector3(0, 0, 0), Quaternion.identity);
-            Elephant.LevelStarted(_levelNumber);
-        }
-        else
-        {
-            _levelNumarasi = PlayerPrefs.GetInt("LevelNumarasi");
-
-            güncelLevel = Instantiate(_leveller[_levelNumarasi], new Vector3(0, 0, 0), Quaternion.identity);
-            Elephant.LevelStarted(_levelNumber);
-        }
-       
-
-
-    }
-
-    
-    public void LevelDegistir()
-    {
-        Destroy(güncelLevel);
-        _levelNumarasi = PlayerPrefs.GetInt("LevelNumarasi");
-        _levelNumber = PlayerPrefs.GetInt("LevelNumber");
-        _toplamLevelSayisi = _leveller.Count - 1;
-        Elephant.LevelCompleted(_levelNumber);
-
-        if (_levelNumber < _toplamLevelSayisi)
-        {
-            _levelNumarasi = PlayerPrefs.GetInt("LevelNumarasi");
-            _levelNumarasi += 1;
-            _levelNumber++;
-
-            güncelLevel = Instantiate(_leveller[_levelNumarasi], new Vector3(0, 0, 0), Quaternion.identity);
-            PlayerPrefs.SetInt("LevelNumarasi", _levelNumarasi);
-            PlayerPrefs.SetInt("LevelNumber", _levelNumber);
-            Elephant.LevelStarted(_levelNumber);
-        }
-        else
-        {
-            _levelNumarasi = PlayerPrefs.GetInt("LevelNumarasi");
-            int _geciciLevelNumarasi = _levelNumarasi;
-            
-            _levelNumarasi = Random.Range(0, _toplamLevelSayisi);
-
-            if (_levelNumarasi == _geciciLevelNumarasi)
-            {
-                LevelDegistir();
-            }
-            else
-            {
-                _levelNumber++;
-                güncelLevel = Instantiate(_leveller[_levelNumarasi], new Vector3(0, 0, 0), Quaternion.identity);
-                PlayerPrefs.SetInt("LevelNumarasi", _levelNumarasi);
-                PlayerPrefs.SetInt("LevelNumber", _levelNumber);
-                Elephant.LevelStarted(_levelNumber);
-            }
-        
-
-            
-
-        }
-
-        
-    }
-
-    public void LevelRestart()
-    {
-        Destroy(güncelLevel);
-        _levelNumarasi = PlayerPrefs.GetInt("LevelNumarasi");
-        _toplamLevelSayisi = _leveller.Count - 1;
-        Elephant.LevelFailed(_levelNumber);
-
-        if (_levelNumber < _toplamLevelSayisi)
-        {
-            _levelNumarasi = PlayerPrefs.GetInt("LevelNumarasi");
-            güncelLevel = Instantiate(_leveller[_levelNumarasi], new Vector3(0, 0, 0), Quaternion.identity);
-            Elephant.LevelStarted(_levelNumber);
-        }
-        else
-        {
-            _levelNumarasi = PlayerPrefs.GetInt("LevelNumarasi");
-
-            güncelLevel = Instantiate(_leveller[_levelNumarasi], new Vector3(0, 0, 0), Quaternion.identity);
-            Elephant.LevelStarted(_levelNumber);
-        }
-    }
+	// restart level tu?una bas?ld???nda UIManager scriptinden ?a?r?lacak..
+	public void RestartLevelEvents()
+	{
+		Elephant.LevelFailed(totalLevelNo);
+		// DEAKT?F ED?LEN OBSTACLELARIN TEKRAR A?ILMASI ???N..
+		//GameObject[] obstacles;
+		//obstacles = GameObject.FindGameObjectsWithTag("obstacle");
+		//for (int i = 0; i < obstacles.Length; i++)
+		//{
+		//	obstacles[i].GetComponent<MeshRenderer>().enabled = true;
+		//}
+		GameObject[] collectibles;
+		collectibles = GameObject.FindGameObjectsWithTag("collectible");
+		for (int i = 0; i < collectibles.Length; i++)
+		{
+			collectibles[i].GetComponent<MeshRenderer>().enabled = true;
+		}
+	}
 }

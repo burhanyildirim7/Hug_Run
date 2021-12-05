@@ -1,75 +1,49 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController instance;
 
-    [SerializeField] private int _iyiToplanabilirDeger;
+	public Animator playerAnimator;
+	public Renderer armForStart, armForGame;
 
-    [SerializeField] private int _kötüToplanabilirDeger;
+	private void Awake()
+	{
+		if (instance == null) instance = this;
+		else Destroy(this);
+	}
 
-    [SerializeField] private GameObject _karakterPaketi;
+	private void Start()
+	{
+		SetArmForStart();
+	}
 
-    private int _elmasSayisi;
+	public void SetArmForGaming()
+	{
+		armForGame.enabled = true;
+		armForStart.enabled = false;
+	}
 
-    private GameObject _player;
+	public void SetArmForStart()
+	{
 
+		armForGame.enabled = false;
+		armForStart.enabled = true;
+	}
 
-    private int _toplananElmasSayisi;
+	public void PlayerWalkAnim()
+	{
+		playerAnimator.SetTrigger("walk");
+	}
 
+	public void PlayerIdleAnim()
+	{
+		playerAnimator.SetTrigger("idle");
+	}
 
-
-    void Start()
-    {
-        LevelStart();
-
-    }
-
-
-
-
-    private void OnTriggerEnter(Collider other)
-    {
-  
-        if (other.tag == "Elmas")
-        {
-            _elmasSayisi += 1;
-            _toplananElmasSayisi += 1;
-            PlayerPrefs.SetInt("ElmasSayisi", _elmasSayisi);
-            Destroy(other.gameObject);
-        }
-        else
-        {
-
-        }
-    }
-
-    private void WinScreenAc()
-    {
-
-    }
-
-    private void LoseScreenAc()
-    {
-
-    }
-
-
-    
-
-    public void LevelStart()
-    {
-        _toplananElmasSayisi = 1;
-        _elmasSayisi = PlayerPrefs.GetInt("ElmasSayisi");
-        _karakterPaketi.transform.position = new Vector3(0, 0, 0);
-        _karakterPaketi.transform.rotation = Quaternion.Euler(0, 0, 0);
-        _player = GameObject.FindWithTag("Player");
-        _player.transform.localPosition = new Vector3(0, 1, 0);
-    }
-    
-
+	public void PlayerClapAnim()
+	{
+		playerAnimator.SetTrigger("clap");
+	}
 
 }
