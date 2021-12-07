@@ -6,11 +6,7 @@ public class UIController : MonoBehaviour
 {
 	public static UIController instance;
 	public GameObject TapToStartPanel,LoosePanel,GamePanel,WinPanel;
-	public TextMeshProUGUI npcCountText;
-	public Animator playerAnimator;
-	public Renderer playerArmForStart, playerArmForGaming;
-
-
+	public TextMeshProUGUI npcCountText,gamePlayScoreText,winScreenScoreText,levelNoText;
 
 
 
@@ -32,19 +28,21 @@ public class UIController : MonoBehaviour
 		GamePanel.SetActive(false);
 	}
 
-	//public void SetLevelText(int levelNo)
-	//{
-	//	levelNoText.text = "Level " + levelNo.ToString();
-	//}
+	public void SetLevelText(int levelNo)
+	{
+		levelNoText.text = "Level " + levelNo.ToString();
+	}
 
 	// TAPTOSTART TU?UNA BASILDI?INDA  --- G?R?? EKRANINDA VE LEVEL BA?LARINDA
 	public void TapToStartButtonClick()
 	{
+		GameManager.instance.TakeNPCsFirstPositions();
 		GameManager.instance.isContinue = true;
 		PlayerController.instance.SetArmForGaming();
 		TapToStartPanel.SetActive(false);
 		GamePanel.SetActive(true);
-		playerAnimator.SetTrigger("walk");
+		PlayerController.instance.PlayerWalkAnim();
+		SetLevelText(LevelController.instance.totalLevelNo);
 
 	}
 
@@ -53,7 +51,7 @@ public class UIController : MonoBehaviour
 	{
 		TapToStartPanel.SetActive(true);
 		LoosePanel.SetActive(false);
-		//LevelController.instance.RestartLevelEvents();
+		LevelController.instance.RestartLevelEvents();
 	}
 
 
@@ -63,7 +61,7 @@ public class UIController : MonoBehaviour
 		TapToStartPanel.SetActive(true);
 		WinPanel.SetActive(false);
 		GamePanel.SetActive(false);
-		//LevelController.instance.NextLevelEvents();
+		LevelController.instance.NextLevelEvents();
 	}
 
 	public void SetNpcCountText(int count, int maxCount)
@@ -71,27 +69,39 @@ public class UIController : MonoBehaviour
 		npcCountText.text = count + "/" + maxCount;
 	}
 
-	//public void SetScoreText()
-	//{
-	//	scoreText.text =GameManager.instance.score.ToString();
-	//}
+	public void SetScoreText()
+	{
+		gamePlayScoreText.text = GameManager.instance.score.ToString();
+	}
 
-	//public void SetGemsText()
-	//{
-	//	gemsText.text =GameManager.instance.gems.ToString();
-	//}
+	public void WinScreenScore()
+	{
+		winScreenScoreText.text = GameManager.instance.score.ToString();
+	}
 
-	//public void SetTotalScoreText()
-	//{
-	//	totalScoreTextStartPanel.text = PlayerPrefs.GetInt("totalscore").ToString();
-	//	totalScoreTextGamePanel.text = PlayerPrefs.GetInt("totalscore").ToString();
-	//}
+	public void ActivateWinScreen()
+	{
+		GamePanel.SetActive(false);
+		WinPanel.SetActive(true);
+		WinScreenScore();
+	}
 
-	//public void SetTotalGemsText()
-	//{
-	//	totalGemsTextStartPanel.text =PlayerPrefs.GetInt("totalgems").ToString();
-	//	totalGemsTextGamePanel.text = PlayerPrefs.GetInt("totalgems").ToString();
-	//}
+	public void ActivateLooseScreen()
+	{
+		GamePanel.SetActive(false);
+		LoosePanel.SetActive(true);
+	}
 
+	public void ActivateGameScreen()
+	{
+		GamePanel.SetActive(true);
+		TapToStartPanel.SetActive(false);
+	}
 
+	public void ActivateTapToStartScreen()
+	{
+		TapToStartPanel.SetActive(false);
+		WinPanel.SetActive(false);
+		LoosePanel.SetActive(false);
+	}
 }

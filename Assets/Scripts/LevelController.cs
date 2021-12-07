@@ -7,7 +7,7 @@ public class LevelController : MonoBehaviour
 {
 
 	public static LevelController instance;
-	public int levelNo, tempLevelNo, totalLevelNo;
+	public int levelNo, tempLevelNo, totalLevelNo; // totallevelno tüm leveller bitip random gelmeye baþlayýnca kullanýlýyor
 	public List<GameObject> levels = new List<GameObject>();
 	private GameObject currentLevelObj;
 
@@ -19,7 +19,7 @@ public class LevelController : MonoBehaviour
 
 	private void Start()
 	{
-		//PlayerPrefs.DeleteAll();
+		PlayerPrefs.DeleteAll();
 		totalLevelNo = PlayerPrefs.GetInt("level");
 		if (totalLevelNo == 0)
 		{
@@ -50,7 +50,7 @@ public class LevelController : MonoBehaviour
 		{
 			levelNo = totalLevelNo;
 		}
-		//UIController.instance.levelNoText.text = "Level " + totalLevelNo.ToString();
+		UIController.instance.SetLevelText(totalLevelNo);
 		currentLevelObj = Instantiate(levels[levelNo - 1], Vector3.zero, Quaternion.identity);
 		Elephant.LevelStarted(totalLevelNo);
 	}
@@ -58,28 +58,24 @@ public class LevelController : MonoBehaviour
 	// next level tu?una bas?ld???nda UIManager scriptinden ?a?r?lacak..
 	public void NextLevelEvents()
 	{
+		NpcController.instance.StartingEvents();
 		Elephant.LevelCompleted(totalLevelNo);
+		GameManager.instance.KillAllNpcs();
 		Destroy(currentLevelObj);
 		IncreaseLevelNo();
 		LevelStartingEvents();
+		GameManager.instance.ClearLists();
+		PlayerController.instance.PlayerStartPosition();
+		CameraController.instance.SetCameraStartOffset();
 	}
 
 	// restart level tu?una bas?ld???nda UIManager scriptinden ?a?r?lacak..
 	public void RestartLevelEvents()
 	{
 		Elephant.LevelFailed(totalLevelNo);
+		GameManager.instance.SetNCSsPositionAgain();
+		GameManager.instance.ActivateAllDisabledObjects();
 		// DEAKT?F ED?LEN OBSTACLELARIN TEKRAR A?ILMASI ???N..
-		//GameObject[] obstacles;
-		//obstacles = GameObject.FindGameObjectsWithTag("obstacle");
-		//for (int i = 0; i < obstacles.Length; i++)
-		//{
-		//	obstacles[i].GetComponent<MeshRenderer>().enabled = true;
-		//}
-		GameObject[] collectibles;
-		collectibles = GameObject.FindGameObjectsWithTag("collectible");
-		for (int i = 0; i < collectibles.Length; i++)
-		{
-			collectibles[i].GetComponent<MeshRenderer>().enabled = true;
-		}
+		
 	}
 }

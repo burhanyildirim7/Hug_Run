@@ -5,6 +5,8 @@ using DG.Tweening;
 
 public class NpcController : MonoBehaviour
 {
+	public static NpcController instance;
+
     public List<Vector3> npcPositions = new List<Vector3>();
 
     public int armValue= 0;
@@ -12,13 +14,19 @@ public class NpcController : MonoBehaviour
     public SkinnedMeshRenderer skRenderer;
 	public GameObject arms;
 	public GameObject player;
-	private Vector3 firsNpcFinalPosition;
+	private Vector3 firstNpcFinalPosition;
 	private float npcFinalYPosition = -1f;
 	private float npcHeight = 1.6f;
 	private int npcCount = 0;
 	private int maxNpcCount = 1;
 	private int maxTotalNpc = 60;
 
+
+	private void Awake()
+	{
+		if (instance == null) instance = this;
+		else Destroy(this);
+	}
 
 	private void Start()
 	{
@@ -27,8 +35,10 @@ public class NpcController : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other)
 	{
+		
 		if (other.CompareTag("npc"))
 		{
+
 			// npc sayýsýný artýracaðýz.. ve içeriye npc atacaðýz...
 			if(npcCount < maxNpcCount)
 			{
@@ -40,8 +50,9 @@ public class NpcController : MonoBehaviour
 				npcCount++;
 				UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 			}
-
 			SetArmValue();
+			GameManager.instance.score = npcCount * 10;
+			UIController.instance.SetScoreText();
 		}
 		else if (other.CompareTag("obstacle"))
 		{
@@ -68,18 +79,29 @@ public class NpcController : MonoBehaviour
 			}
 			UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 			SetArmValue();
+			GameManager.instance.score = npcCount * 10;
+			UIController.instance.SetScoreText();
 		}
 		else if (other.CompareTag("final"))
 		{
+			GameManager.instance.disabledObjects.Add(other.gameObject);
+			other.GetComponent<Collider>().enabled = false;
 			GameManager.instance.isContinue = false;
-			StartCoroutine(NpcFinalArray());
-			PlayerController.instance.PlayerIdleAnim();
-			PlayerController.instance.SetArmForStart();
-			CameraController.instance.SetCameraFinalOffset();
+			if (npcCount > 0)
+			{				
+				StartCoroutine(NpcFinalArray());
+				PlayerController.instance.PlayerIdleAnim();
+				PlayerController.instance.SetArmForStart();
+				CameraController.instance.SetCameraFinalOffset();
+			}
+			else
+			{
+				PlayerController.instance.PlayerIdleAnim();
+				UIController.instance.ActivateLooseScreen();
+			}
+			
 		}
-		
-
-
+	
 	}
 
 	private void OnTriggerExit(Collider other)
@@ -125,9 +147,10 @@ public class NpcController : MonoBehaviour
 	{
 		GameManager.instance.disabledObjects.Add(obj.gameObject);
 		obj.gameObject.SetActive(false);
+		int tempMax = maxNpcCount;
 		maxNpcCount -= value;
 		bool isLastThrow = false;
-		if (value >= maxNpcCount) isLastThrow = true;
+		if (value >= tempMax && npcCount != 0) isLastThrow = true;
 		if (maxNpcCount <= 0) maxNpcCount = 1;
 		if (npcCount > maxNpcCount)
 		{
@@ -155,27 +178,6 @@ public class NpcController : MonoBehaviour
 		SetCollider();
 	}
 
-	public IEnumerator MakeBlendShape(int value)
-	{
-		if (value > 0)
-		{
-			while ((int)skRenderer.GetBlendShapeWeight(0) < value)
-			{
-				float tempValue = skRenderer.GetBlendShapeWeight(0) + .5f;
-				skRenderer.SetBlendShapeWeight(0, tempValue);
-				yield return new WaitForSeconds(0.02f);
-			}
-		}
-		else
-		{
-			while ((int)skRenderer.GetBlendShapeWeight(0) > value)
-			{
-				float tempValue = skRenderer.GetBlendShapeWeight(0) - .5f;
-				skRenderer.SetBlendShapeWeight(0, tempValue);
-				yield return new WaitForSeconds(0.02f);
-			}
-		}	
-	}
 
 	private void SetCollider()
 	{
@@ -219,12 +221,16 @@ public class NpcController : MonoBehaviour
 	IEnumerator FallNpcThrow(GameObject obj)
 	{
 		int frame = 0;
-		float distanceX = Random.Range(-.02f,.02f);
-		float distanceZ = Random.Range(.05f,.1f);
-		while (frame <= 120)
+		float distanceX;
+		if(transform.position.x >= 0) distanceX = Random.Range(-.03f, -.025f);
+		else distanceX = Random.Range(.025f,.03f);
+
+		//float distanceX = Random.Range(-.02f,.02f);
+		float distanceZ = Random.Range(.03f,.06f);
+		while (frame <= 100)
 		{
 			obj.transform.position = new Vector3(obj.transform.position.x + distanceX,obj.transform.position.y, obj.transform.position.z + distanceZ);
-			yield return new WaitForSeconds(.01f);
+			yield return new WaitForEndOfFrame();
 			frame++;
 			if (frame == 50)
 			{
@@ -236,9 +242,10 @@ public class NpcController : MonoBehaviour
 
 	IEnumerator NpcFinalArray()
 	{
+		float stackPointZ = GameObject.Find("StackPoint").transform.position.z;
 		int count = arms.transform.childCount;
-		GameObject[] objects = new GameObject[arms.transform.childCount];
-		for (int i = 0; i < arms.transform.childCount; i++)
+		GameObject[] objects = new GameObject[count];
+		for (int i = 0; i < count; i++)
 		{
 			objects[i] = arms.transform.GetChild(i).gameObject;
 		}
@@ -248,22 +255,37 @@ public class NpcController : MonoBehaviour
 			objects[i].transform.tag = "fNpc";
 			objects[i].transform.SetParent(null);
 		}
+		yield return new WaitForSeconds(.5f);
 		for (int i = 0; i < count; i++)
 		{		
 			npcFinalYPosition += npcHeight;
-			firsNpcFinalPosition = new Vector3(arms.transform.position.x, npcFinalYPosition, arms.transform.position.z + 10);
-			objects[i].transform.DOMove(firsNpcFinalPosition, 1);
+			firstNpcFinalPosition = new Vector3(transform.position.x, npcFinalYPosition, stackPointZ);
+			objects[i].transform.DOMove(firstNpcFinalPosition, 1);
 			yield return new WaitForSeconds(.1f);
 			objects[i].transform.rotation = Quaternion.Euler(0, 180, 0);
 			npcCount--;
 			UIController.instance.SetNpcCountText(npcCount,maxNpcCount);
 		}
+		GetComponent<Collider>().enabled = false;
 		npcFinalYPosition += npcHeight;
-		firsNpcFinalPosition = new Vector3(arms.transform.position.x, npcFinalYPosition, arms.transform.position.z + 10);
-		player.transform.DOMove(firsNpcFinalPosition, 1);
-		player.transform.rotation = Quaternion.Euler(0,180,0);
+		firstNpcFinalPosition = new Vector3(transform.position.x, npcFinalYPosition, stackPointZ);
+		transform.DOMove(firstNpcFinalPosition, 1);
+		transform.rotation = Quaternion.Euler(0,180,0);
 		PlayerController.instance.PlayerClapAnim();
 		CameraController.instance.SetCameraFinalInverse();
+		yield return new WaitForSeconds(1.1f);
+		GetComponent<Collider>().enabled = true;
+		
+	}
+
+
+	internal void StartingEvents()
+	{
+		npcFinalYPosition = -1f;
+		skRenderer.SetBlendShapeWeight(0, 0);
+		npcCount = 0;
+		maxNpcCount = 1;
+		UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 	}
 
 

@@ -10,7 +10,8 @@ public class CameraController : MonoBehaviour
     public Vector3 cameraFinalOffset = new Vector3(0,4,-4);
     public Vector3 cameraFinalInverseOffset = new Vector3(0,4,-4);
     public Vector3 cameraStartOffset = new Vector3(0,3.8f,-3);
-    public GameObject cameraLookAtObj, cameraInverseLookAtObj;
+    public GameObject cameraLookAtObj, player;
+
 
 
     private void Awake()
@@ -42,13 +43,14 @@ public class CameraController : MonoBehaviour
 
     public void SetCameraFinalInverse()
 	{
-        //cmVcam.LookAt = cameraInverseLookAtObj.transform;
+        cmVcam.LookAt = player.transform;
         cmVcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = cameraFinalInverseOffset;
 
     }
 
     public void SetCameraStartOffset()
     {
+        cmVcam.LookAt = cameraLookAtObj.transform;
         cmVcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = cameraStartOffset;
     }
 
@@ -60,10 +62,12 @@ public class CameraController : MonoBehaviour
             cmVcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.Lerp(
                 cmVcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset,
                 cameraFinalOffset,count);
-            count += .001f;
-            yield return new WaitForSeconds(.02f);
+            count += .005f;
+            yield return new WaitForEndOfFrame();
 		}
 	}
+
+
 
 
 }

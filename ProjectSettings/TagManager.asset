@@ -18,6 +18,7 @@ TagManager:
   - npc
   - fNpc
   - final
+  - xs
   layers:
   - Default
   - TransparentFX
