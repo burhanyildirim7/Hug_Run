@@ -1768,7 +1768,7 @@ GameObject:
   - component: {fileID: 7667042730495921036}
   - component: {fileID: 1193848295436599799}
   m_Layer: 0
-  m_Name: Npc2
+  m_Name: eskinpc2
   m_TagString: npc
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

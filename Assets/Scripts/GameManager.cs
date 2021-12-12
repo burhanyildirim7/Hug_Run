@@ -58,7 +58,6 @@ public class GameManager : MonoBehaviour
 		{
             npcs[i].transform.position = npcsFirtsPosition[i];
             npcs[i].GetComponent<Collider>().enabled = true;
-
 		}
 	}
 
@@ -67,9 +66,12 @@ public class GameManager : MonoBehaviour
 	{
 		for (int i = 0; i < disabledObjects.Count; i++)
 		{
-            disabledObjects[i].SetActive(true);
-            disabledObjects[i].GetComponent<Renderer>().enabled = true;
+            disabledObjects[i].SetActive(true);    
             disabledObjects[i].GetComponent<Collider>().enabled = true;
+            if (!disabledObjects[i].transform.CompareTag("final"))
+			{
+                disabledObjects[i].GetComponent<Renderer>().enabled = true;
+            }
 		}
 	}
 

@@ -50,9 +50,13 @@ public class NpcController : MonoBehaviour
 				npcCount++;
 				UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 			}
+			if (npcCount >= 1) PlayerController.instance.SetArmForGaming();
 			SetArmValue();
 			GameManager.instance.score = npcCount * 10;
 			UIController.instance.SetScoreText();
+			if (npcCount == maxNpcCount) UIController.instance.npcCountText.color = Color.red;
+			else UIController.instance.npcCountText.color = Color.white;
+
 		}
 		else if (other.CompareTag("obstacle"))
 		{
@@ -77,6 +81,9 @@ public class NpcController : MonoBehaviour
 				FallNpc(arms.transform.GetChild(npcCount - 1).gameObject);
 				npcCount -= 1;
 			}
+			if (npcCount == 0) PlayerController.instance.SetArmForStart();
+			if (npcCount == maxNpcCount) UIController.instance.npcCountText.color = Color.red;
+			else UIController.instance.npcCountText.color = Color.white;
 			UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 			SetArmValue();
 			GameManager.instance.score = npcCount * 10;
@@ -141,6 +148,8 @@ public class NpcController : MonoBehaviour
 		obj.gameObject.SetActive(false);
 		maxNpcCount += value;
 		SetArmValue();
+		if (npcCount == maxNpcCount) UIController.instance.npcCountText.color = Color.red;
+		else UIController.instance.npcCountText.color = Color.white;
 	}
 
 	private void NegativeDoor(GameObject obj , int value)
@@ -167,15 +176,72 @@ public class NpcController : MonoBehaviour
 			maxNpcCount = 1;
 			npcCount = 0;
 		}
+		if (npcCount == 0) PlayerController.instance.SetArmForStart();
+		if (npcCount == maxNpcCount) UIController.instance.npcCountText.color = Color.red;
+		else UIController.instance.npcCountText.color = Color.white;
 		SetArmValue();
 		UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 	}
 
 	private void SetArmValue()
 	{
-		float keyValue = 7 + npcCount*100/65;
-		skRenderer.SetBlendShapeWeight(0,keyValue);
+		float keyValue = 0;// = 7 + npcCount*100/65;
+		if (maxNpcCount < 4) keyValue = 5;
+		else if (maxNpcCount >= 4 && maxNpcCount < 6)
+		{
+			keyValue = 15;
+		}
+		else if (maxNpcCount >= 6 && maxNpcCount < 9)
+		{
+			keyValue = 20;
+		}
+		else if (maxNpcCount >= 9 && maxNpcCount < 11)
+		{
+			keyValue = 30;
+		}
+		else if (maxNpcCount >= 11 && maxNpcCount < 13)
+		{
+			keyValue = 35;
+		}
+		else if (maxNpcCount >= 13 && maxNpcCount < 17)
+		{
+			keyValue = 40;
+		}
+		else if (maxNpcCount >= 17 && maxNpcCount < 22)
+		{
+			keyValue = 45;
+		}
+		else if (maxNpcCount >= 22 && maxNpcCount < 29)
+		{
+			keyValue = 50;
+		}
+		else if (maxNpcCount >= 29 && maxNpcCount < 32)
+		{
+			keyValue = 55;
+		}
+		else if (maxNpcCount >= 32 && maxNpcCount < 40)
+		{
+			keyValue = 60;
+		}
+		else if (maxNpcCount >= 40 && maxNpcCount < 51)
+		{
+			keyValue = 70;
+		}
+		else if (maxNpcCount >= 51 && maxNpcCount < 57)
+		{
+			keyValue = 80;
+		}
+		else if (maxNpcCount >= 57 && maxNpcCount < 71)
+		{
+			keyValue = 90;
+		}
+		else
+		{
+			keyValue = 100;
+		}
+		skRenderer.SetBlendShapeWeight(0, keyValue);
 		SetCollider();
+
 	}
 
 
@@ -222,8 +288,8 @@ public class NpcController : MonoBehaviour
 	{
 		int frame = 0;
 		float distanceX;
-		if(transform.position.x >= 0) distanceX = Random.Range(-.03f, -.025f);
-		else distanceX = Random.Range(.025f,.03f);
+		if(transform.position.x >= 0) distanceX = Random.Range(-.015f, -.01f);
+		else distanceX = Random.Range(.01f,.015f);
 
 		//float distanceX = Random.Range(-.02f,.02f);
 		float distanceZ = Random.Range(.03f,.06f);
@@ -271,7 +337,7 @@ public class NpcController : MonoBehaviour
 		firstNpcFinalPosition = new Vector3(transform.position.x, npcFinalYPosition, stackPointZ);
 		transform.DOMove(firstNpcFinalPosition, 1);
 		transform.rotation = Quaternion.Euler(0,180,0);
-		PlayerController.instance.PlayerClapAnim();
+		//PlayerController.instance.PlayerClapAnim();
 		CameraController.instance.SetCameraFinalInverse();
 		yield return new WaitForSeconds(1.1f);
 		GetComponent<Collider>().enabled = true;

@@ -38,7 +38,7 @@ public class UIController : MonoBehaviour
 	{
 		GameManager.instance.TakeNPCsFirstPositions();
 		GameManager.instance.isContinue = true;
-		PlayerController.instance.SetArmForGaming();
+		//PlayerController.instance.SetArmForGaming();
 		TapToStartPanel.SetActive(false);
 		GamePanel.SetActive(true);
 		PlayerController.instance.PlayerWalkAnim();
@@ -49,8 +49,9 @@ public class UIController : MonoBehaviour
 	// RESTART TU?UNA BASILDI?INDA  --- LOOSE EKRANINDA
 	public void RestartButtonClick()
 	{
-		TapToStartPanel.SetActive(true);
+		GamePanel.SetActive(false);
 		LoosePanel.SetActive(false);
+		TapToStartPanel.SetActive(true);
 		LevelController.instance.RestartLevelEvents();
 	}
 

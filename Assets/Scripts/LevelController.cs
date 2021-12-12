@@ -14,7 +14,7 @@ public class LevelController : MonoBehaviour
 	private void Awake()
 	{
 		if (instance == null) instance = this;
-		else Destroy(this.gameObject);
+		else Destroy(this);
 	}
 
 	private void Start()
@@ -75,7 +75,7 @@ public class LevelController : MonoBehaviour
 		Elephant.LevelFailed(totalLevelNo);
 		GameManager.instance.SetNCSsPositionAgain();
 		GameManager.instance.ActivateAllDisabledObjects();
-		// DEAKT?F ED?LEN OBSTACLELARIN TEKRAR A?ILMASI ???N..
-		
+		PlayerController.instance.PlayerStartPosition();
+
 	}
 }

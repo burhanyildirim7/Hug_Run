@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public static PlayerController instance;
-	public Animator playerAnimator;
+    public static PlayerController  instance;
+	public Animator playerAnimator, ghostAnimator;
 	public Renderer armForStart, armForGame;
 
 	private void Awake()
@@ -32,22 +32,34 @@ public class PlayerController : MonoBehaviour
 
 	public void PlayerWalkAnim()
 	{
+		playerAnimator.ResetTrigger("idle");
+		ghostAnimator.ResetTrigger("idle");
 		playerAnimator.SetTrigger("walk");
+		ghostAnimator.SetTrigger("walk");
 	}
 
 	public void PlayerIdleStartAnim()
 	{
-		playerAnimator.SetTrigger("idlestart");
+		playerAnimator.ResetTrigger("walk");
+		ghostAnimator.ResetTrigger("walk");
+		playerAnimator.SetTrigger("idle");
+		ghostAnimator.SetTrigger("idle");
 	}
 
 	public void PlayerIdleAnim()
 	{
+		playerAnimator.ResetTrigger("walk");
+		ghostAnimator.ResetTrigger("walk");
 		playerAnimator.SetTrigger("idle");
+		ghostAnimator.SetTrigger("idle");
 	}
 
 	public void PlayerClapAnim()
 	{
-		playerAnimator.SetTrigger("clap");
+		playerAnimator.ResetTrigger("walk");
+		ghostAnimator.ResetTrigger("walk");
+		playerAnimator.SetTrigger("idle");
+		ghostAnimator.SetTrigger("idle");
 	}
 
 	private void OnTriggerEnter(Collider other)
@@ -61,8 +73,7 @@ public class PlayerController : MonoBehaviour
 				UIController.instance.ActivateWinScreen();
 
 			}
-		}
-		
+		}	
 	}
 
 	public void PlayerStartPosition()
