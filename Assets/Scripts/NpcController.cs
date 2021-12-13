@@ -185,7 +185,7 @@ public class NpcController : MonoBehaviour
 
 	private void SetArmValue()
 	{
-		float keyValue = 0;// = 7 + npcCount*100/65;
+		float keyValue;// = 7 + npcCount*100/65;
 		if (maxNpcCount < 4) keyValue = 5;
 		else if (maxNpcCount >= 4 && maxNpcCount < 6)
 		{

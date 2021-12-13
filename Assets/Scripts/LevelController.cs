@@ -53,6 +53,8 @@ public class LevelController : MonoBehaviour
 		UIController.instance.SetLevelText(totalLevelNo);
 		currentLevelObj = Instantiate(levels[levelNo - 1], Vector3.zero, Quaternion.identity);
 		Elephant.LevelStarted(totalLevelNo);
+		UIController.instance.npcCountText.color = Color.white;
+
 	}
 
 	// next level tu?una bas?ld???nda UIManager scriptinden ?a?r?lacak..
@@ -66,6 +68,7 @@ public class LevelController : MonoBehaviour
 		LevelStartingEvents();
 		GameManager.instance.ClearLists();
 		PlayerController.instance.PlayerStartPosition();
+		UIController.instance.npcCountText.color = Color.white;
 		CameraController.instance.SetCameraStartOffset();
 	}
 
@@ -76,6 +79,7 @@ public class LevelController : MonoBehaviour
 		GameManager.instance.SetNCSsPositionAgain();
 		GameManager.instance.ActivateAllDisabledObjects();
 		PlayerController.instance.PlayerStartPosition();
+		UIController.instance.npcCountText.color = Color.white;
 
 	}
 }
