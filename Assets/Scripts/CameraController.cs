@@ -50,6 +50,7 @@ public class CameraController : MonoBehaviour
 
     public void SetCameraStartOffset()
     {
+        GetComponent<CinemachineBrain>().enabled = true;
         cmVcam.LookAt = cameraLookAtObj.transform;
         cmVcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = cameraStartOffset;
     }
@@ -67,6 +68,17 @@ public class CameraController : MonoBehaviour
 		}
 	}
 
+
+    public void DeactivateCinemachineBrain()
+	{
+        GetComponent<CinemachineBrain>().enabled = false;
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+    }
+
+    public void ActivateCinemachineBrain()
+	{
+        GetComponent<CinemachineBrain>().enabled = false;
+    }
 
 
 

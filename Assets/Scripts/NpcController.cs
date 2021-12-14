@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using TMPro;
 
 public class NpcController : MonoBehaviour
 {
@@ -54,8 +55,7 @@ public class NpcController : MonoBehaviour
 			SetArmValue();
 			GameManager.instance.score = npcCount * 10;
 			UIController.instance.SetScoreText();
-			if (npcCount == maxNpcCount) UIController.instance.npcCountText.color = Color.red;
-			else UIController.instance.npcCountText.color = Color.white;
+			if (npcCount == maxNpcCount) PlayerController.instance.NpcCountTextAnim();
 
 		}
 		else if (other.CompareTag("obstacle"))
@@ -82,8 +82,6 @@ public class NpcController : MonoBehaviour
 				npcCount -= 1;
 			}
 			if (npcCount == 0) PlayerController.instance.SetArmForStart();
-			if (npcCount == maxNpcCount) UIController.instance.npcCountText.color = Color.red;
-			else UIController.instance.npcCountText.color = Color.white;
 			UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 			SetArmValue();
 			GameManager.instance.score = npcCount * 10;
@@ -113,43 +111,46 @@ public class NpcController : MonoBehaviour
 
 	private void OnTriggerExit(Collider other)
 	{
-		 if (other.CompareTag("+3"))
+		int count = other.transform.childCount;
+		if (other.CompareTag("door"))
 		{
-			PositiveDoor(other.gameObject, 3);
+			if (other.GetComponent<TextMeshProUGUI>().text == "+3")
+			{
+				PositiveDoor(other.transform.parent.transform.parent.gameObject, 3);
+			}
+			else if (other.GetComponent<TextMeshProUGUI>().text == "+5")
+			{
+				PositiveDoor(other.transform.parent.transform.parent.gameObject, 5);
+			}
+			else if (other.GetComponent<TextMeshProUGUI>().text == "+10")
+			{
+				PositiveDoor(other.transform.parent.transform.parent.gameObject, 10);
+			}
+			else if (other.GetComponent<TextMeshProUGUI>().text == "-3")
+			{
+				NegativeDoor(other.transform.parent.transform.parent.gameObject, 3);
+			}
+			else if (other.GetComponent<TextMeshProUGUI>().text == "-5")
+			{
+				NegativeDoor(other.transform.parent.transform.parent.gameObject, 5);
+			}
+			else if (other.GetComponent<TextMeshProUGUI>().text == "-10")
+			{
+				NegativeDoor(other.transform.parent.transform.parent.gameObject, 10);
+			}
+			if (maxNpcCount > maxTotalNpc) maxNpcCount = maxTotalNpc;
+			UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 		}
-		else if (other.CompareTag("+5"))
-		{
-			PositiveDoor(other.gameObject, 5);
-		}
-		else if (other.CompareTag("+10"))
-		{
-			PositiveDoor(other.gameObject,10);
-		}
-		else if (other.CompareTag("-3"))
-		{
-			NegativeDoor(other.gameObject, 3);
-		}
-		else if (other.CompareTag("-5"))
-		{
-			NegativeDoor(other.gameObject, 5);
-		}
-		else if (other.CompareTag("-10"))
-		{
-			NegativeDoor(other.gameObject, 10);
-		}
-		if (maxNpcCount > maxTotalNpc) maxNpcCount = maxTotalNpc;
-		UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
+		
 	}
 
 
 	private void PositiveDoor(GameObject obj , int value)
 	{
-		GameManager.instance.disabledObjects.Add(obj.gameObject);
-		obj.gameObject.SetActive(false);
+		GameManager.instance.disabledObjects.Add(obj);
+		obj.SetActive(false);
 		maxNpcCount += value;
 		SetArmValue();
-		if (npcCount == maxNpcCount) UIController.instance.npcCountText.color = Color.red;
-		else UIController.instance.npcCountText.color = Color.white;
 	}
 
 	private void NegativeDoor(GameObject obj , int value)
@@ -177,8 +178,6 @@ public class NpcController : MonoBehaviour
 			npcCount = 0;
 		}
 		if (npcCount == 0) PlayerController.instance.SetArmForStart();
-		if (npcCount == maxNpcCount) UIController.instance.npcCountText.color = Color.red;
-		else UIController.instance.npcCountText.color = Color.white;
 		SetArmValue();
 		UIController.instance.SetNpcCountText(npcCount, maxNpcCount);
 	}
@@ -308,9 +307,13 @@ public class NpcController : MonoBehaviour
 
 	IEnumerator NpcFinalArray()
 	{
-		float stackPointZ = GameObject.Find("StackPoint").transform.position.z;
+		GameObject stackPoint = GameObject.Find("StackPoint");
+		float stackPointZ = stackPoint.transform.position.z;
+		CameraController.instance.DeactivateCinemachineBrain();
+		CameraController.instance.gameObject.transform.DOMove(new Vector3(0 , 1, stackPointZ - 3),.5f);
 		int count = arms.transform.childCount;
 		GameObject[] objects = new GameObject[count];
+		float maxHeigt = count * npcHeight;
 		for (int i = 0; i < count; i++)
 		{
 			objects[i] = arms.transform.GetChild(i).gameObject;
@@ -323,23 +326,28 @@ public class NpcController : MonoBehaviour
 		}
 		yield return new WaitForSeconds(.5f);
 		for (int i = 0; i < count; i++)
-		{		
+		{
+			objects[i].GetComponentInChildren<Renderer>().enabled = false;
 			npcFinalYPosition += npcHeight;
-			firstNpcFinalPosition = new Vector3(transform.position.x, npcFinalYPosition, stackPointZ);
-			objects[i].transform.DOMove(firstNpcFinalPosition, 1);
-			yield return new WaitForSeconds(.1f);
+			firstNpcFinalPosition = new Vector3(0, npcFinalYPosition, stackPointZ);
+			objects[i].transform.DOMove(firstNpcFinalPosition, .5f);
 			objects[i].transform.rotation = Quaternion.Euler(0, 180, 0);
+			yield return new WaitForSeconds(.52f);
+			objects[i].GetComponentInChildren<Renderer>().enabled = true;
+			if(i == 0) CameraController.instance.gameObject.transform.DOMove(new Vector3(
+				0, maxHeigt, objects[i].transform.position.z - 5f), count*.52f).SetEase(Ease.Linear);
+
 			npcCount--;
 			UIController.instance.SetNpcCountText(npcCount,maxNpcCount);
 		}
 		GetComponent<Collider>().enabled = false;
 		npcFinalYPosition += npcHeight;
-		firstNpcFinalPosition = new Vector3(transform.position.x, npcFinalYPosition, stackPointZ);
+		firstNpcFinalPosition = new Vector3(0, npcFinalYPosition, stackPointZ);
 		transform.DOMove(firstNpcFinalPosition, 1);
 		transform.rotation = Quaternion.Euler(0,180,0);
 		//PlayerController.instance.PlayerClapAnim();
-		CameraController.instance.SetCameraFinalInverse();
-		yield return new WaitForSeconds(1.1f);
+		//CameraController.instance.SetCameraFinalInverse();
+		yield return new WaitForSeconds(1.5f);
 		GetComponent<Collider>().enabled = true;
 		
 	}

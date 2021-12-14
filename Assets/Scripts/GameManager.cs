@@ -57,6 +57,7 @@ public class GameManager : MonoBehaviour
 		for (int i = 0; i < npcs.Count; i++)
 		{
             npcs[i].transform.position = npcsFirtsPosition[i];
+            npcs[i].transform.rotation = Quaternion.Euler(0,180,0);
             npcs[i].GetComponent<Collider>().enabled = true;
 		}
 	}

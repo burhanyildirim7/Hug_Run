@@ -115,7 +115,7 @@ GameObject:
   - component: {fileID: 5485358488715596588}
   m_Layer: 0
   m_Name: -5
-  m_TagString: -5
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -210,9 +210,10 @@ GameObject:
   - component: {fileID: 4010721491920255087}
   - component: {fileID: 6773739548593678298}
   - component: {fileID: 8838208816320578092}
+  - component: {fileID: 5157026969950317579}
   m_Layer: 0
   m_Name: Text (TMP)
-  m_TagString: Untagged
+  m_TagString: door
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -334,3 +335,16 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!65 &5157026969950317579
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6858837772060287296}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 177.47763, y: 200.00009, z: 20}
+  m_Center: {x: 8.760497, y: 0, z: 0}

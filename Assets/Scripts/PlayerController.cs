@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController  instance;
-	public Animator playerAnimator, ghostAnimator;
+	public Animator playerAnimator, ghostAnimator, npcCountTextAnim;
 	public Renderer armForStart, armForGame;
 
 	private void Awake()
@@ -60,6 +60,11 @@ public class PlayerController : MonoBehaviour
 		ghostAnimator.ResetTrigger("walk");
 		playerAnimator.SetTrigger("idle");
 		ghostAnimator.SetTrigger("idle");
+	}
+
+	public void NpcCountTextAnim()
+	{
+		npcCountTextAnim.SetTrigger("start");
 	}
 
 	private void OnTriggerEnter(Collider other)

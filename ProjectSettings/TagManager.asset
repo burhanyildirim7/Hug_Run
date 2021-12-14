@@ -8,17 +8,12 @@ TagManager:
   - LevelController
   - UIController
   - Elmas
-  - +3
-  - +5
-  - +10
-  - -3
-  - -5
-  - -10
   - obstacle
   - npc
   - fNpc
   - final
   - xs
+  - door
   layers:
   - Default
   - TransparentFX
