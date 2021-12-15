@@ -248,27 +248,27 @@ public class NpcController : MonoBehaviour
 	{
 		if (armValue < 20)
 		{
-			GetComponent<SphereCollider>().radius = .4f;
+			GetComponent<SphereCollider>().radius = .5f;
 			GetComponent<SphereCollider>().center = new Vector3(0,1,.28f);
 		}
 		else if (armValue >= 20 && armValue<40)
 		{
-			GetComponent<SphereCollider>().radius = .6f;
+			GetComponent<SphereCollider>().radius = .7f;
 			GetComponent<SphereCollider>().center = new Vector3(0, 1, .5f);
 		}
 		else if (armValue >= 40 && armValue < 60)
 		{
-			GetComponent<SphereCollider>().radius = .65f;
+			GetComponent<SphereCollider>().radius = .8f;
 			GetComponent<SphereCollider>().center = new Vector3(0, 1, 1f);
 		}
 		else if (armValue >= 60 && armValue < 80)
 		{
-			GetComponent<SphereCollider>().radius = .8f;
+			GetComponent<SphereCollider>().radius = .9f;
 			GetComponent<SphereCollider>().center = new Vector3(0, 1, 1.3f);
 		}
 		else if (armValue >= 80 )
 		{
-			GetComponent<SphereCollider>().radius = 1f;
+			GetComponent<SphereCollider>().radius = 1.1f;
 			GetComponent<SphereCollider>().center = new Vector3(0, 1, 1.8f);
 		}
 
@@ -310,7 +310,7 @@ public class NpcController : MonoBehaviour
 		GameObject stackPoint = GameObject.Find("StackPoint");
 		float stackPointZ = stackPoint.transform.position.z;
 		CameraController.instance.DeactivateCinemachineBrain();
-		CameraController.instance.gameObject.transform.DOMove(new Vector3(0 , 1, stackPointZ - 3),.5f);
+		CameraController.instance.gameObject.transform.DOMove(new Vector3(0 , 1, stackPointZ - 5f),.8f);
 		int count = arms.transform.childCount;
 		GameObject[] objects = new GameObject[count];
 		float maxHeigt = count * npcHeight;
@@ -330,12 +330,12 @@ public class NpcController : MonoBehaviour
 			objects[i].GetComponentInChildren<Renderer>().enabled = false;
 			npcFinalYPosition += npcHeight;
 			firstNpcFinalPosition = new Vector3(0, npcFinalYPosition, stackPointZ);
-			objects[i].transform.DOMove(firstNpcFinalPosition, .5f);
+			objects[i].transform.DOMove(firstNpcFinalPosition, .2f);
 			objects[i].transform.rotation = Quaternion.Euler(0, 180, 0);
-			yield return new WaitForSeconds(.52f);
+			yield return new WaitForSeconds(.22f);
 			objects[i].GetComponentInChildren<Renderer>().enabled = true;
 			if(i == 0) CameraController.instance.gameObject.transform.DOMove(new Vector3(
-				0, maxHeigt, objects[i].transform.position.z - 5f), count*.52f).SetEase(Ease.Linear);
+				0, maxHeigt, objects[i].transform.position.z - 5f), count*.221f).SetEase(Ease.Linear);
 
 			npcCount--;
 			UIController.instance.SetNpcCountText(npcCount,maxNpcCount);
