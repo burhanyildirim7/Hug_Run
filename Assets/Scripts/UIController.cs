@@ -1,12 +1,13 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 
 public class UIController : MonoBehaviour
 {
 	public static UIController instance;
 	public GameObject TapToStartPanel,LoosePanel,GamePanel,WinPanel;
-	public TextMeshProUGUI npcCountText,gamePlayScoreText,winScreenScoreText,levelNoText;
+	public Text npcCountText,gamePlayScoreText,winScreenScoreText,levelNoText;
 
 
 
