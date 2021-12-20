@@ -297,7 +297,7 @@ public class NpcController : MonoBehaviour
         GameObject stackPoint = GameObject.Find("StackPoint");
         float stackPointZ = stackPoint.transform.position.z;
         CameraController.instance.DeactivateCinemachineBrain();
-        CameraController.instance.gameObject.transform.DOMove(new Vector3(0, 1, stackPointZ - 5f), .8f);
+        CameraController.instance.gameObject.transform.DOMove(new Vector3(0, 3, stackPointZ - 7f), .8f);
         int count = arms.transform.childCount;
         GameObject[] objects = new GameObject[count];
         float maxHeigt = count * npcHeight;
@@ -322,7 +322,7 @@ public class NpcController : MonoBehaviour
             yield return new WaitForSeconds(.22f);
             objects[i].GetComponentInChildren<Renderer>().enabled = true;
             if (i == 0) CameraController.instance.gameObject.transform.DOMove(new Vector3(
-                 0, maxHeigt, objects[i].transform.position.z - 5f), count * .221f).SetEase(Ease.Linear);
+                 0, maxHeigt + 2, objects[i].transform.position.z - 7f), count * .221f).SetEase(Ease.Linear);
 
             npcCount--;
             UIController.instance.SetNpcCountText(npcCount, maxNpcCount);

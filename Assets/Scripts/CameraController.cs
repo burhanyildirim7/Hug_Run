@@ -7,9 +7,9 @@ public class CameraController : MonoBehaviour
 {
     public static CameraController instance;
     public CinemachineVirtualCamera cmVcam;
-    public Vector3 cameraFinalOffset = new Vector3(0,4,-4);
-    public Vector3 cameraFinalInverseOffset = new Vector3(0,4,-4);
-    public Vector3 cameraStartOffset = new Vector3(0,3.8f,-3);
+    public Vector3 cameraFinalOffset = new Vector3(0, 4, -4);
+    public Vector3 cameraFinalInverseOffset = new Vector3(0, 4, -4);
+    public Vector3 cameraStartOffset = new Vector3(0, 3.8f, -3);
     public GameObject cameraLookAtObj, player;
 
 
@@ -20,15 +20,15 @@ public class CameraController : MonoBehaviour
         else Destroy(this);
     }
 
-	private void Start()
-	{
+    private void Start()
+    {
         SetCameraStartOffset();
-	}
+    }
 
-	public void DeactivateCMVcam()
-	{
+    public void DeactivateCMVcam()
+    {
         GetComponent<CinemachineBrain>().enabled = false;
-	}
+    }
 
     public void ActivateCMVcam()
     {
@@ -37,12 +37,12 @@ public class CameraController : MonoBehaviour
 
 
     public void SetCameraFinalOffset()
-	{
+    {
         StartCoroutine(CameraFinalEase());
     }
 
     public void SetCameraFinalInverse()
-	{
+    {
         cmVcam.LookAt = player.transform;
         cmVcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = cameraFinalInverseOffset;
 
@@ -56,27 +56,27 @@ public class CameraController : MonoBehaviour
     }
 
     IEnumerator CameraFinalEase()
-	{
+    {
         float count = 0;
-        while(Vector3.Distance(cmVcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset, cameraFinalOffset) > 0.1f)
-		{
+        while (Vector3.Distance(cmVcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset, cameraFinalOffset) == 0)
+        {
             cmVcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.Lerp(
                 cmVcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset,
-                cameraFinalOffset,count);
+                cameraFinalOffset, count);
             count += .005f;
             yield return new WaitForEndOfFrame();
-		}
-	}
+        }
+    }
 
 
     public void DeactivateCinemachineBrain()
-	{
+    {
         GetComponent<CinemachineBrain>().enabled = false;
         transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 
     public void ActivateCinemachineBrain()
-	{
+    {
         GetComponent<CinemachineBrain>().enabled = false;
     }
 
