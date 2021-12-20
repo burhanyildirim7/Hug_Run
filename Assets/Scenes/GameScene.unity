@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.4788496, g: 0.80017924, b: 0.8994595, a: 1}
+  m_IndirectSpecularColor: {r: 0.4770398, g: 0.79908794, b: 0.8987446, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -153,7 +153,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 326513068}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -497,7 +497,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 0.46205357, y: 1}
+    m_SensorSize: {x: 0.4620853, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -871,6 +871,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: LEVEL1
       objectReference: {fileID: 0}
+    - target: {fileID: 7318626368321747070, guid: ab9993d6d658982429cdd1e8e4b05ef1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7363947206221672689, guid: ab9993d6d658982429cdd1e8e4b05ef1, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.35
@@ -1095,6 +1099,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HareketliSilindir
       objectReference: {fileID: 0}
+    - target: {fileID: 6694955607849525356, guid: cc8ec99b52e14c54f8550cd20cc71680, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8401435280565232193, guid: cc8ec99b52e14c54f8550cd20cc71680, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.15
@@ -1209,8 +1217,8 @@ MonoBehaviour:
   totalLevelNo: 0
   levels:
   - {fileID: 7318626368321747070, guid: ab9993d6d658982429cdd1e8e4b05ef1, type: 3}
-  - {fileID: 7318626368321747070, guid: 6568e68bfb0e0e648af6c5bc58622284, type: 3}
-  - {fileID: 7318626368321747070, guid: 8041f8308312cf343bb8d6439943d9d4, type: 3}
+  - {fileID: 7318626368321747070, guid: ab9993d6d658982429cdd1e8e4b05ef1, type: 3}
+  - {fileID: 7318626368321747070, guid: ab9993d6d658982429cdd1e8e4b05ef1, type: 3}
 --- !u!1 &676887879499767521
 GameObject:
   m_ObjectHideFlags: 0
@@ -1930,9 +1938,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1194281969}
         m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: TaptoStartPanelClose
+        m_MethodName: TapToStartButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3138,9 +3146,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1194281969}
         m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: NextLevelButton
+        m_MethodName: NextLevelButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3629,9 +3637,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1194281969}
         m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: LevelRestartButton
+        m_MethodName: RestartButtonClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
