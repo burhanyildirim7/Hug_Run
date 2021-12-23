@@ -63,7 +63,7 @@ public class NpcController : MonoBehaviour
         {
             // npc say?s?n? azalt?p o say? kadar npc yi d??ar? atacaz.. kollar da ufalabilir...
             GameManager.instance.disabledObjects.Add(other.gameObject);
-            other.gameObject.SetActive(false);
+            //other.gameObject.SetActive(false);
 
             int fallNpcCount = Random.Range(1, 3);
             if (fallNpcCount == 1 && npcCount >= 1)
