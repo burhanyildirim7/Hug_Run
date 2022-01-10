@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
     public Animator playerAnimator, ghostAnimator, npcCountTextAnim;
     public Renderer armForStart, armForGame;
 
+    public GameObject _countCanvas;
+
     private void Awake()
     {
         if (instance == null) instance = this;
@@ -48,6 +50,8 @@ public class PlayerController : MonoBehaviour
 
     public void PlayerIdleAnim()
     {
+        _countCanvas.SetActive(false);
+
         playerAnimator.ResetTrigger("walk");
         ghostAnimator.ResetTrigger("walk");
         playerAnimator.SetTrigger("idle");
@@ -73,6 +77,8 @@ public class PlayerController : MonoBehaviour
         {
             if (other.transform.parent.transform.CompareTag("xs"))
             {
+
+
                 //CameraController.instance.SetCameraFinalInverse();
                 GetComponent<Collider>().enabled = false;
 
@@ -86,6 +92,8 @@ public class PlayerController : MonoBehaviour
 
     public void PlayerStartPosition()
     {
+        _countCanvas.SetActive(true);
+
         PlayerIdleStartAnim();
         GetComponent<Collider>().enabled = true;
         transform.parent.transform.position = new Vector3(0, .5f, 0);

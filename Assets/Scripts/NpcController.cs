@@ -41,6 +41,8 @@ public class NpcController : MonoBehaviour
         if (other.CompareTag("npc"))
         {
 
+            MoreMountains.NiceVibrations.MMVibrationManager.Haptic(MoreMountains.NiceVibrations.HapticTypes.MediumImpact);
+
             // npc say?s?n? art?raca??z.. ve i?eriye npc ataca??z...
             if (npcCount < maxNpcCount)
             {
@@ -61,6 +63,9 @@ public class NpcController : MonoBehaviour
         }
         else if (other.CompareTag("obstacle"))
         {
+
+            MoreMountains.NiceVibrations.MMVibrationManager.Haptic(MoreMountains.NiceVibrations.HapticTypes.MediumImpact);
+
             // npc say?s?n? azalt?p o say? kadar npc yi d??ar? atacaz.. kollar da ufalabilir...
             GameManager.instance.disabledObjects.Add(other.gameObject);
             //other.gameObject.SetActive(false);
@@ -116,6 +121,9 @@ public class NpcController : MonoBehaviour
 
         if (other.CompareTag("door"))
         {
+
+            MoreMountains.NiceVibrations.MMVibrationManager.Haptic(MoreMountains.NiceVibrations.HapticTypes.MediumImpact);
+
             if (other.GetComponent<DoorScript>()._kapiDeger > 0)
             {
                 PositiveDoor(other.transform.parent.transform.parent.gameObject, other.GetComponent<DoorScript>()._kapiDeger);
